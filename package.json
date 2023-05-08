@@ -18,6 +18,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-flip-move": "^3.0.5",
+    "react-mobile-picker": "^0.2.1",
+    "react-native-number-please": "^1.0.5",
     "react-router-dom": "^6.11.0",
     "react-scripts": "5.0.1",
     "react-shuffle": "^2.1.0",

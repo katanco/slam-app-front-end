@@ -1,11 +1,18 @@
-import { FormEvent, Fragment, useRef, useState } from "react";
+import { FormEvent, Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetch } from "usehooks-ts";
 import { Participant, RoomResponse } from "../types/types";
-import { TextField, Autocomplete, Stack, Button } from "@mui/material";
-import { ParticipantList } from "./ParticipantList";
-import { Error } from "./Error";
-import { Loader } from "./Loader";
+import {
+  TextField,
+  Autocomplete,
+  Stack,
+  Button,
+  Snackbar,
+} from "@mui/material";
+import { ParticipantList } from "./Lists";
+import { Error, Loader } from "./Helpers";
+import { LoadingButton } from "@mui/lab";
+import { Add } from "@mui/icons-material";
 
 const pronounOptions = [
   "he/him",
@@ -22,12 +29,15 @@ export function RoomDetail() {
   let [name, setName] = useState("");
   let [pronouns, setPronouns] = useState("");
   let [internal, setInternal] = useState(0);
-  const form = useRef<HTMLFormElement | null>(null);
+
+  let [open, setOpen] = useState(false);
+  let [loading, setLoading] = useState(false);
 
   let handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setLoading(true);
     try {
-      let res = await fetch(`${process.env.PUBLIC_URL}/data/participant`, {
+      let res = await fetch(`${window.location.origin}/data/participant`, {
         method: "POST",
         body: JSON.stringify({
           name: name,
@@ -39,16 +49,22 @@ export function RoomDetail() {
         },
       });
       let resJson: Participant = await res.json();
+      setLoading(false);
       if (res.status === 201) {
         setName("");
         setPronouns("");
         data?.participants.push(resJson);
       } else {
-        alert("An error occured");
+        setOpen(true);
       }
     } catch (err) {
-      console.log(err);
+      setLoading(false);
+      setOpen(true);
     }
+  };
+
+  const handleClose = (event: any, reason: string) => {
+    if (reason !== "clickaway") setOpen(false);
   };
 
   let shuffleArray = () => {
@@ -63,7 +79,7 @@ export function RoomDetail() {
   };
 
   const { data, error } = useFetch<RoomResponse>(
-    `${process.env.PUBLIC_URL}/data/room/${roomId}`
+    `${window.location.origin}/data/room/${roomId}`
   );
 
   if (error) return <Error />;
@@ -75,7 +91,7 @@ export function RoomDetail() {
       <h1>{data.room.name}</h1>
       <p>{new Date(data.room.created).toDateString()}</p>
       {data.participants.length < 8 && (
-        <form ref={form} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <Stack spacing={1}>
             <TextField
               id="add-participant-name"
@@ -103,9 +119,14 @@ export function RoomDetail() {
                 />
               )}
             />
-            <Button type="submit" variant="outlined">
+            <LoadingButton
+              loading={loading}
+              type="submit"
+              variant="outlined"
+              endIcon={<Add />}
+            >
               Add
-            </Button>
+            </LoadingButton>
           </Stack>
         </form>
       )}
@@ -114,10 +135,14 @@ export function RoomDetail() {
           <p>Room Full</p>
           <Button onClick={shuffleArray} variant="outlined">
             Shuffle List
-          </Button>{" "}
+          </Button>
+          <Button onClick={() => alert("coming soon :)")}>Start Event</Button>
         </Fragment>
       )}
       <ParticipantList participants={data.participants} />
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Error />
+      </Snackbar>
     </Fragment>
   );
 }

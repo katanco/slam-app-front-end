@@ -39,3 +39,6 @@ body {
   background-color: #141414;
   color: #FFEAD0;
 }
+.picker-item-selected {
+  color: #80DBCE !important;
+}

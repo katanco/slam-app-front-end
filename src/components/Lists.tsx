@@ -1,5 +1,5 @@
 import SmoothList from "react-smooth-list";
-import { Participant } from "../types/types";
+import { Participant, Room } from "../types/types";
 
 export function ParticipantList({
   participants,
@@ -20,6 +20,25 @@ export function ParticipantList({
           <div style={{ fontStyle: "italic" }}>{participant.pronouns}</div>
         </div>
       ))}
+    </SmoothList>
+  );
+}
+
+export function RoomList({ rooms }: { rooms: Room[] }) {
+  return (
+    <SmoothList>
+      {rooms.map((room) => {
+        return (
+          <div
+            className="card"
+            onClick={() => (window.location.href = `/${room.id}`)}
+            key={room.id}
+          >
+            <h2>{room.name}</h2>
+            <p>{new Date(room.created).toDateString()}</p>
+          </div>
+        );
+      })}
     </SmoothList>
   );
 }

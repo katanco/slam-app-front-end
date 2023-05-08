@@ -1,20 +1,20 @@
-import { FormEvent, Fragment, useRef, useState } from "react";
+import { FormEvent, Fragment, useState } from "react";
 import { Room } from "../types/types";
-import { TextField, Stack, Snackbar, Alert } from "@mui/material";
+import { TextField, Stack, Snackbar } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
+import { Error } from "./Helpers";
 
-export default function Component() {
+export function RoomNew() {
   let [name, setName] = useState("");
   let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
-  const form = useRef<HTMLFormElement | null>(null);
 
   let handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
     try {
-      let res = await fetch(`${process.env.PUBLIC_URL}/data/room`, {
+      let res = await fetch(`${window.location.origin}/data/room`, {
         method: "POST",
         body: JSON.stringify({
           name: name,
@@ -26,7 +26,7 @@ export default function Component() {
       let resJson: Room = await res.json();
       setLoading(false);
       if (res.status === 201) {
-        window.location.href = `${process.env.PUBLIC_URL}/room/${resJson.id}`;
+        window.location.href = `/${resJson.id}`;
       } else {
         setOpen(true);
       }
@@ -36,21 +36,14 @@ export default function Component() {
     }
   };
 
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
+  const handleClose = (event: any, reason: string) => {
+    if (reason !== "clickaway") setOpen(false);
   };
 
   return (
     <Fragment>
-      <h1>New Room</h1>
-      <form ref={form} onSubmit={handleSubmit}>
+      <h1>New Event</h1>
+      <form onSubmit={handleSubmit}>
         <Stack spacing={2}>
           <TextField
             id="add-participant-name"
@@ -71,9 +64,7 @@ export default function Component() {
         </Stack>
       </form>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Alert severity="error" sx={{ width: "100%" }}>
-          An error occured, please try again later 😔
-        </Alert>
+        <Error />
       </Snackbar>
     </Fragment>
   );

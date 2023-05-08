@@ -1,11 +1,13 @@
 import "./App.css";
-import Roomlist from "./components/Roomlist";
+import { RoomHome } from "./components/RoomHome";
 import { RoomDetail } from "./components/RoomDetail";
-import NewRoom from "./components/NewRoom";
+import { RoomNew } from "./components/RoomNew";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { ScoreNew } from "./components/ScoreNew";
+import { Score } from "@mui/icons-material";
 
 const darkTheme = createTheme({
   palette: {
@@ -27,11 +29,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/">
-              <Route index element={<Roomlist />} />
-              <Route path="room">
-                <Route path="new" element={<NewRoom />} />
-                <Route path=":roomId" element={<RoomDetail />} />
-              </Route>
+              <Route index element={<RoomHome />} />
+              <Route path="new" element={<RoomNew />} />
+              <Route path="score" element={<ScoreNew />} />
+              <Route path=":roomId" element={<RoomDetail />} />
             </Route>
           </Routes>
         </BrowserRouter>
