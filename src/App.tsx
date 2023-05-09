@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ScoreNew } from "./components/ScoreNew";
-import { Score } from "@mui/icons-material";
 
 const darkTheme = createTheme({
   palette: {

@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { useFetch } from "usehooks-ts";
 import { Room } from "../types/types";
 import { Button } from "@mui/material";
@@ -6,9 +6,37 @@ import { Error, Loader } from "./Helpers";
 import { RoomList } from "./Lists";
 
 export function RoomHome() {
+  let [internal, setInternal] = useState(0);
+
   const { data, error } = useFetch<Room[]>(
-    `${window.location.origin}/data/room`
+    `${process.env.REACT_APP_API_URL}/room`
   );
+
+  let handleDelete = async (room: Room) => {
+    try {
+      let res = await fetch(
+        `${process.env.REACT_APP_API_URL}/room/${room.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+      if (res.status === 200) {
+        console.info(res);
+        data?.splice(
+          data.findIndex((item) => item.id === room.id),
+          1
+        );
+        setInternal(internal + 1);
+      } else {
+        console.info(res);
+      }
+    } catch {
+      alert("sorry");
+    }
+  };
 
   if (error) return <Error />;
 
@@ -24,7 +52,7 @@ export function RoomHome() {
         Create Event
       </Button>
 
-      <RoomList rooms={data} />
+      <RoomList rooms={data} onDelete={handleDelete} />
     </Fragment>
   );
 }

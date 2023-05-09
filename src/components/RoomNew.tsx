@@ -14,7 +14,7 @@ export function RoomNew() {
     event.preventDefault();
     setLoading(true);
     try {
-      let res = await fetch(`${window.location.origin}/data/room`, {
+      let res = await fetch(`${process.env.REACT_APP_API_URL}/room`, {
         method: "POST",
         body: JSON.stringify({
           name: name,

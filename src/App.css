@@ -42,3 +42,11 @@ body {
 .picker-item-selected {
   color: #80DBCE !important;
 }
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}

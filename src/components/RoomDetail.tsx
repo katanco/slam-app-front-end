@@ -37,7 +37,7 @@ export function RoomDetail() {
     event.preventDefault();
     setLoading(true);
     try {
-      let res = await fetch(`${window.location.origin}/data/participant`, {
+      let res = await fetch(`${process.env.REACT_APP_API_URL}/participant`, {
         method: "POST",
         body: JSON.stringify({
           name: name,
@@ -63,6 +63,32 @@ export function RoomDetail() {
     }
   };
 
+  let handleDelete = async (participant: Participant) => {
+    try {
+      let res = await fetch(
+        `${process.env.REACT_APP_API_URL}/participant/${participant.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+      if (res.status === 200) {
+        console.info(res);
+        data?.participants.splice(
+          data.participants.findIndex((item) => item.id === participant.id),
+          1
+        );
+        setInternal(internal + 1);
+      } else {
+        setOpen(true);
+      }
+    } catch (err) {
+      setOpen(true);
+    }
+  };
+
   const handleClose = (event: any, reason: string) => {
     if (reason !== "clickaway") setOpen(false);
   };
@@ -79,7 +105,7 @@ export function RoomDetail() {
   };
 
   const { data, error } = useFetch<RoomResponse>(
-    `${window.location.origin}/data/room/${roomId}`
+    `${process.env.REACT_APP_API_URL}/room/${roomId}`
   );
 
   if (error) return <Error />;
@@ -139,7 +165,10 @@ export function RoomDetail() {
           <Button onClick={() => alert("coming soon :)")}>Start Event</Button>
         </Fragment>
       )}
-      <ParticipantList participants={data.participants} />
+      <ParticipantList
+        participants={data.participants}
+        onDelete={handleDelete}
+      />
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
         <Error />
       </Snackbar>
