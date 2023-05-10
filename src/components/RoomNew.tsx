@@ -26,7 +26,7 @@ export function RoomNew() {
       let resJson: Room = await res.json();
       setLoading(false);
       if (res.status === 201) {
-        window.location.href = `/${resJson.id}`;
+        window.location.href = `/room/${resJson.id}`;
       } else {
         setOpen(true);
       }

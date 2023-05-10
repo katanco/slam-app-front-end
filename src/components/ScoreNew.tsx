@@ -1,5 +1,9 @@
+import { LoadingButton } from "@mui/lab";
+import { Snackbar } from "@mui/material";
 import { FormEvent, Fragment, useState } from "react";
 import Picker from "react-mobile-picker";
+import { useParams } from "react-router-dom";
+import { Error } from "./Helpers";
 
 const optionGroups = {
   first: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -9,14 +13,10 @@ const optionGroups = {
 export function ScoreNew() {
   let [valueGroups, setValueGroups] = useState({
     first: "5",
-    second: "0",
+    second: ".0",
   });
 
-  const availableValues = [
-    { id: "first", label: ".", min: 1, max: 10 },
-    { id: "second", label: "", min: 0, max: 9 },
-  ];
-
+  let { participationId } = useParams();
   let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
 
@@ -24,13 +24,20 @@ export function ScoreNew() {
     event.preventDefault();
     setLoading(true);
     try {
-      // post score
+      const value = Number(valueGroups.first + valueGroups.second);
+      let res = await fetch(`${process.env.REACT_APP_API_URL}/score`, {
+        method: "POST",
+        body: JSON.stringify({
+          value: value,
+          participation_id: participationId,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setLoading(false);
-      if (true) {
-        setValueGroups({
-          first: "5",
-          second: "0",
-        });
+      if (res.status === 201) {
+        window.history.back();
       } else {
         setOpen(true);
       }
@@ -53,13 +60,21 @@ export function ScoreNew() {
 
   return (
     <Fragment>
-      <Picker
-        optionGroups={optionGroups}
-        valueGroups={valueGroups}
-        onChange={handleChange}
-        wheel="natural"
-        itemHeight={72}
-      />
+      <form onSubmit={handleSubmit}>
+        <Picker
+          optionGroups={optionGroups}
+          valueGroups={valueGroups}
+          onChange={handleChange}
+          wheel="natural"
+          itemHeight={72}
+        />
+        <LoadingButton loading={loading} type="submit" variant="outlined">
+          Submit
+        </LoadingButton>
+      </form>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Error />
+      </Snackbar>
     </Fragment>
   );
 }

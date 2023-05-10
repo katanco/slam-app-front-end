@@ -1,7 +1,7 @@
 import { FormEvent, Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetch } from "usehooks-ts";
-import { Participant, RoomResponse } from "../types/types";
+import { Participant, RoomResponse, Round } from "../types/types";
 import {
   TextField,
   Autocomplete,
@@ -89,6 +89,32 @@ export function RoomDetail() {
     }
   };
 
+  let handleAdvance = async () => {
+    setLoading(true);
+    try {
+      let res = await fetch(
+        `${process.env.REACT_APP_API_URL}/room/${roomId}/advance`,
+        {
+          method: "POST",
+          body: JSON.stringify(data?.participants),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      let resJson: Round = await res.json();
+      setLoading(false);
+      if (res.status === 201) {
+        window.location.href = `/room/${roomId}/round/${resJson.id}`;
+      } else {
+        setOpen(true);
+      }
+    } catch (err) {
+      setLoading(false);
+      setOpen(true);
+    }
+  };
+
   const handleClose = (event: any, reason: string) => {
     if (reason !== "clickaway") setOpen(false);
   };
@@ -162,7 +188,9 @@ export function RoomDetail() {
           <Button onClick={shuffleArray} variant="outlined">
             Shuffle List
           </Button>
-          <Button onClick={() => alert("coming soon :)")}>Start Event</Button>
+          <Button onClick={handleAdvance} variant="outlined">
+            Start Event
+          </Button>
         </Fragment>
       )}
       <ParticipantList

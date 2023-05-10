@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ScoreNew } from "./components/ScoreNew";
+import { RoundDetail } from "./components/RoundDetail";
 
 const darkTheme = createTheme({
   palette: {
@@ -30,8 +31,12 @@ function App() {
             <Route path="/">
               <Route index element={<RoomHome />} />
               <Route path="new" element={<RoomNew />} />
-              <Route path="score" element={<ScoreNew />} />
-              <Route path=":roomId" element={<RoomDetail />} />
+              <Route path="room/:roomId" element={<RoomDetail />} />
+              <Route
+                path="room/:roomId/round/:roundId"
+                element={<RoundDetail />}
+              />
+              <Route path="score/:participationId" element={<ScoreNew />} />
             </Route>
           </Routes>
         </BrowserRouter>
