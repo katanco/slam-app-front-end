@@ -13,11 +13,11 @@ const optionGroups = {
 export function ScoreNew() {
   let [valueGroups, setValueGroups] = useState({
     first: "5",
-    second: ".0",
+    second: ".5",
   });
 
   let { participationId } = useParams();
-  
+
   let [submitterId, setSubmitterId] = useState("");
   let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export function ScoreNew() {
         body: JSON.stringify({
           value: value,
           participation_id: participationId,
-          submitter_id: submitterId
+          submitter_id: submitterId,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -63,8 +63,7 @@ export function ScoreNew() {
 
   if (!submitterId) {
     const storedId = localStorage.getItem("submitterId");
-    if (storedId)
-    setSubmitterId(storedId)
+    if (storedId) setSubmitterId(storedId);
     else {
       const newId = Math.random().toString(36).slice(2, 7);
       localStorage.setItem("submitterId", newId);
@@ -73,17 +72,21 @@ export function ScoreNew() {
 
   return (
     <Fragment>
-      <form onSubmit={handleSubmit}>
-        <Picker
-          optionGroups={optionGroups}
-          valueGroups={valueGroups}
-          onChange={handleChange}
-          wheel="natural"
-          itemHeight={72}
-        />
-        <LoadingButton loading={loading} type="submit" variant="outlined">
-          Submit
-        </LoadingButton>
+      <form onSubmit={handleSubmit} className="flex-column">
+        <div className="flex-grow flex-column" style={{justifyContent: "center"}}>
+          <Picker
+            optionGroups={optionGroups}
+            valueGroups={valueGroups}
+            onChange={handleChange}
+            wheel="natural"
+            itemHeight={72}
+          />
+        </div>
+        <div>
+          <LoadingButton loading={loading} type="submit" variant="outlined">
+            Submit
+          </LoadingButton>
+        </div>
       </form>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
         <Error />

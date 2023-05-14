@@ -87,10 +87,7 @@ export function ParticipationList({
   return (
     <SmoothList>
       {participations
-        .sort(
-          (item1, item2) => item1.participation.performance_order - item2.participation.performance_order
-        )
-        .map((item, index) => (
+        .map((item) => (
           <div
             className="card flex"
             key={item.participation.id}
