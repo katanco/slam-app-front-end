@@ -33,7 +33,7 @@ function App() {
               <Route path="new" element={<RoomNew />} />
               <Route path="room/:roomId" element={<RoomDetail />} />
               <Route
-                path="room/:roomId/round/:roundId"
+                path="live/:roomId"
                 element={<RoundDetail />}
               />
               <Route path="score/:participationId" element={<ScoreNew />} />

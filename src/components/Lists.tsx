@@ -1,5 +1,5 @@
 import SmoothList from "react-smooth-list";
-import { Participant, Participation, Room } from "../types/types";
+import { Participant, Room, participationResponse } from "../types/types";
 import { IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
@@ -54,7 +54,7 @@ export function RoomList({
         return (
           <div
             className="card flex"
-            onClick={() => (window.location.href = `/room/${room.id}`)}
+            onClick={() => (window.location.href = `/live/${room.id}`)}
             key={room.id}
           >
             <div className="flex-grow">
@@ -82,22 +82,22 @@ export function RoomList({
 export function ParticipationList({
   participations,
 }: {
-  participations: Participation[];
+  participations: participationResponse[];
 }) {
   return (
     <SmoothList>
       {participations
         .sort(
-          (item1, item2) => item1.performance_order - item2.performance_order
+          (item1, item2) => item1.participation.performance_order - item2.participation.performance_order
         )
         .map((item, index) => (
           <div
             className="card flex"
-            key={item.id}
-            onClick={() => (window.location.href = `/score/${item.id}`)}
+            key={item.participation.id}
+            onClick={() => (window.location.href = `/score/${item.participation.id}`)}
           >
-            <div className="flex-grow"></div>
-            <div>{`${item.performance_order}): ${item.score}`}</div>
+            <div className="flex-grow" ><span style={{fontWeight: "bold"}}>{`${item.participant.name}`}</span></div>
+            <div>{item.participation.score}</div>
           </div>
         ))}
     </SmoothList>

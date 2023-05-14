@@ -1,17 +1,16 @@
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { useFetch } from "usehooks-ts";
-import { RoundResponse } from "../types/types";
+import { RoomResponse, RoundResponse } from "../types/types";
 import { Error, Loader } from "./Helpers";
 import { ParticipationList } from "./Lists";
 import { Button } from "@mui/material";
 
 export function RoundDetail() {
-  let { roundId } = useParams();
   let { roomId } = useParams();
 
-  const { data, error } = useFetch<RoundResponse>(
-    `${process.env.REACT_APP_API_URL}/round/${roundId}`
+  const { data, error} = useFetch<RoundResponse>(
+    `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
   );
 
   if (error) return <Error />;

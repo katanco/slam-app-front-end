@@ -17,6 +17,8 @@ export function ScoreNew() {
   });
 
   let { participationId } = useParams();
+  
+  let [submitterId, setSubmitterId] = useState("");
   let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
 
@@ -30,6 +32,7 @@ export function ScoreNew() {
         body: JSON.stringify({
           value: value,
           participation_id: participationId,
+          submitter_id: submitterId
         }),
         headers: {
           "Content-Type": "application/json",
@@ -57,6 +60,16 @@ export function ScoreNew() {
       [name]: value,
     });
   };
+
+  if (!submitterId) {
+    const storedId = localStorage.getItem("submitterId");
+    if (storedId)
+    setSubmitterId(storedId)
+    else {
+      const newId = Math.random().toString(36).slice(2, 7);
+      localStorage.setItem("submitterId", newId);
+    }
+  }
 
   return (
     <Fragment>

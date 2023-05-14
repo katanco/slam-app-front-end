@@ -3,6 +3,8 @@ export interface Room {
   id: string;
   name: string;
   created: string;
+  round_id_current?: string;
+  participation_id_current?: string;
 }
 
 export interface Participant {
@@ -37,5 +39,10 @@ export interface RoomResponse {
 
 export interface RoundResponse {
   round: Round;
-  participations: Participation[];
+  participations: participationResponse[];
+}
+
+export interface participationResponse {
+  participation: Participation;
+  participant: Participant;
 }
