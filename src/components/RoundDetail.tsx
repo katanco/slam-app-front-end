@@ -14,6 +14,21 @@ export function RoundDetail() {
   let [advancing, setAdvancing] = useState<participationResponse[]>([]);
   let [nonAdvancing, setNonAdvancing] = useState<participationResponse[]>([]);
 
+  const websocketLocation = process.env.REACT_APP_API_URL?.replace('https', 'ws').replace('http', 'ws');
+  const ws = new WebSocket(`${websocketLocation}/ws`);
+
+  ws.onopen = () => {
+    console.log("opened");
+  }
+
+  ws.onmessage = (event) => {
+    console.log(event);
+
+    if (event.data === "refresh") {
+      window.location.reload();
+    }
+  }
+
   const { data, error } = useFetch<RoundResponse>(
     `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
   );
@@ -51,6 +66,7 @@ export function RoundDetail() {
       let resJson: Round = await res.json();
       setLoading(false);
       if (res.status === 201) {
+        ws.send("refresh");
         window.location.reload();
       } else {
         setOpen(true);
@@ -60,6 +76,7 @@ export function RoundDetail() {
       setOpen(true);
     }
   };
+
   if (!closed) {
     return (
       <Fragment>
