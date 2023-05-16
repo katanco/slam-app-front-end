@@ -44,7 +44,7 @@ export function RoomHome({ setOpen }: { setOpen: React.Dispatch<React.SetStateAc
 
   return (
     <Fragment>
-      <h1>slam.gay</h1>
+      <h1>slampoetry.app</h1>
       <Button
         onClick={() => (window.location.href = `/new`)}
         variant="contained"
