@@ -1,13 +1,12 @@
 import { FormEvent, Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetch } from "usehooks-ts";
-import { Participant, RoomResponse, Round } from "../types/types";
+import { Participant, RoomResponse } from "../types/types";
 import {
   TextField,
   Autocomplete,
   Stack,
-  Button,
-  Snackbar,
+  Button
 } from "@mui/material";
 import { ParticipantList } from "./Lists";
 import { Error, Loader } from "./Helpers";
@@ -24,13 +23,12 @@ const pronounOptions = [
   "fae/faer",
 ];
 
-export function RoomDetail() {
+export function RoomDetail({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   let { roomId } = useParams();
   let [name, setName] = useState("");
   let [pronouns, setPronouns] = useState("");
   let [internal, setInternal] = useState(0);
 
-  let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
 
   let handleSubmit = async (event: FormEvent) => {
@@ -102,10 +100,9 @@ export function RoomDetail() {
           },
         }
       );
-      let resJson: Round = await res.json();
       setLoading(false);
       if (res.status === 201) {
-        window.location.href = `/room/${roomId}/round/${resJson.id}`;
+        window.location.href = `/scorekeep/${roomId}`;
       } else {
         setOpen(true);
       }
@@ -113,10 +110,6 @@ export function RoomDetail() {
       setLoading(false);
       setOpen(true);
     }
-  };
-
-  const handleClose = (event: any, reason: string) => {
-    if (reason !== "clickaway") setOpen(false);
   };
 
   let shuffleArray = () => {
@@ -197,9 +190,6 @@ export function RoomDetail() {
         participants={data.participants}
         onDelete={handleDelete}
       />
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Error />
-      </Snackbar>
     </Fragment>
   );
 }

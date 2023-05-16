@@ -1,13 +1,11 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Room } from "../types/types";
-import { TextField, Stack, Snackbar } from "@mui/material";
+import { TextField, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Error } from "./Helpers";
 
-export function RoomNew() {
+export function RoomNew({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   let [name, setName] = useState("");
-  let [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(false);
 
   let handleSubmit = async (event: FormEvent) => {
@@ -26,7 +24,7 @@ export function RoomNew() {
       let resJson: Room = await res.json();
       setLoading(false);
       if (res.status === 201) {
-        window.location.href = `/room/${resJson.id}`;
+        window.location.href = `/new/${resJson.id}`;
       } else {
         setOpen(true);
       }
@@ -34,10 +32,6 @@ export function RoomNew() {
       setLoading(false);
       setOpen(true);
     }
-  };
-
-  const handleClose = (event: any, reason: string) => {
-    if (reason !== "clickaway") setOpen(false);
   };
 
   return (
@@ -63,9 +57,6 @@ export function RoomNew() {
           </LoadingButton>
         </Stack>
       </form>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Error />
-      </Snackbar>
     </Fragment>
   );
 }

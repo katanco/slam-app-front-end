@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { Error, Loader } from "./Helpers";
 import { RoomList } from "./Lists";
 
-export function RoomHome() {
+export function RoomHome({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   let [internal, setInternal] = useState(0);
 
   const { data, error } = useFetch<Room[]>(
@@ -31,12 +31,12 @@ export function RoomHome() {
         );
         setInternal(internal + 1);
       } else {
-        console.info(res);
+        setOpen(true);
       }
     } catch {
-      alert("sorry");
+      setOpen(true);
     }
-  };
+  }
 
   if (error) return <Error />;
 
@@ -53,6 +53,7 @@ export function RoomHome() {
       </Button>
 
       <RoomList rooms={data} onDelete={handleDelete} />
+
     </Fragment>
   );
 }

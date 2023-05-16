@@ -54,7 +54,7 @@ export function RoomList({
         return (
           <div
             className="card flex"
-            onClick={() => (window.location.href = `/live/${room.id}`)}
+            onClick={() => (window.location.href = `/score/${room.id}`)}
             key={room.id}
           >
             <div className="flex-grow">
@@ -80,9 +80,9 @@ export function RoomList({
 }
 
 export function ParticipationList({
-  participations,
+  participations, onClick
 }: {
-  participations: participationResponse[];
+  participations: participationResponse[], onClick: (participation: participationResponse) => void
 }) {
   return (
     <SmoothList>
@@ -91,7 +91,7 @@ export function ParticipationList({
           <div
             className="card flex"
             key={item.participation.id}
-            onClick={() => (window.location.href = `/score/${item.participation.id}`)}
+            onClick={() => onClick(item)}
           >
             <div className="flex-grow" ><span style={{fontWeight: "bold"}}>{`${item.participant.name}`}</span></div>
             <div>{item.participation.score}</div>

@@ -1,0 +1,15 @@
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #80dbce;
+  margin: 20px;
+  text-align: left;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  transition: all 500ms ease-in-out;
+  &:hover {
+    box-shadow: rgba(149, 157, 165, 0.6) 0px 12px 36px;
+    cursor: pointer;
+    transform: scale(1.01);
+    background-color: #ffffff11;
+  }
+}

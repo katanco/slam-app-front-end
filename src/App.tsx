@@ -1,13 +1,14 @@
-import "./App.css";
+import "./styles/App.scss";
 import { RoomHome } from "./components/RoomHome";
 import { RoomDetail } from "./components/RoomDetail";
 import { RoomNew } from "./components/RoomNew";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ScoreNew } from "./components/ScoreNew";
-import { RoundDetail } from "./components/RoundDetail";
+import { RoomScorekeep } from "./components/RoomScorekeep";
+import { useState } from "react";
+import { SnackError } from "./components/Helpers";
+import { RoomJudge } from "./components/RoomJudge";
 
 const darkTheme = createTheme({
   palette: {
@@ -22,6 +23,8 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  let [open, setOpen] = useState(false);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -29,17 +32,15 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/">
-              <Route index element={<RoomHome />} />
-              <Route path="new" element={<RoomNew />} />
-              <Route path="room/:roomId" element={<RoomDetail />} />
-              <Route
-                path="live/:roomId"
-                element={<RoundDetail />}
-              />
-              <Route path="score/:participationId" element={<ScoreNew />} />
+              <Route index element={<RoomHome setOpen={setOpen} />} />
+              <Route path="new" element={<RoomNew setOpen={setOpen}/>} />
+              <Route path="new/:roomId" element={<RoomDetail setOpen={setOpen}/>} />
+              <Route path="scorekeep/:roomId" element={<RoomScorekeep setOpen={setOpen}/>} />
+              <Route path="score/:roomId" element={<RoomJudge setOpen={setOpen}/>} />
             </Route>
           </Routes>
         </BrowserRouter>
+        <SnackError open={open} setOpen={setOpen} />
       </div>
     </ThemeProvider>
   );

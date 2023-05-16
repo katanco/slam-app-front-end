@@ -1,4 +1,3 @@
-import { Room } from "./types.d";
 export interface Room {
   id: string;
   name: string;

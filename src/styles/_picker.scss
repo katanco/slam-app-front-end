@@ -1,0 +1,17 @@
+.picker-item-selected {
+  color: #80dbce !important;
+}
+
+html, body, #root, .App, form{
+    &:has(.picker-container) {
+        height: 100%;
+    }
+    
+    &:has(.qrcode-container) {
+      height: 100%;
+  }
+}
+
+.qrcode-container {
+  height: 100%;
+}
