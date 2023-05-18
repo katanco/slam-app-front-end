@@ -1,6 +1,6 @@
-import { Fragment, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useFetch } from "usehooks-ts";
+import useRefreshableFetch from "../hooks/useReloadableFetch";
 import { RoundResponse, participationResponse } from "../types/types";
 import { Error, Loader } from "./Helpers";
 import { ParticipationList } from "./Lists";
@@ -19,7 +19,7 @@ import { ChevronLeft, QrCode } from "@mui/icons-material";
 export function RoomScorekeep({
   setOpen,
 }: {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   let { roomId } = useParams();
   let [closed, setClosed] = useState(false);
@@ -27,6 +27,10 @@ export function RoomScorekeep({
   let [advancing, setAdvancing] = useState<participationResponse[]>([]);
   let [nonAdvancing, setNonAdvancing] = useState<participationResponse[]>([]);
   let [displayQR, setDisplayQR] = useState(false);
+
+  let { data, error, refresh } = useRefreshableFetch<RoundResponse>(
+    `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
+  );
 
   const socketUrl = `${process.env.REACT_APP_API_URL?.replace(
     "http",
@@ -38,8 +42,8 @@ export function RoomScorekeep({
   const onMessage = (event: MessageEvent<any>) => {
     console.log(event);
 
-    if (event.data === "round advanced") {
-      window.location.reload();
+    if (event.data === "round advanced" || "score submitted") {
+      refresh();
     }
   };
 
@@ -48,16 +52,12 @@ export function RoomScorekeep({
     onOpen: onOpen,
   });
 
-  const { data, error } = useFetch<RoundResponse>(
-    `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
-  );
-
   if (error) return <Error />;
 
   if (!data) return <Loader />;
 
   let handleClose = () => {
-    if (data.participations) {
+    if (data?.participations) {
       let sorted = data.participations.sort(
         (a, b) => (b.participation.score || 0) - (a.participation.score || 0)
       );
@@ -151,11 +151,19 @@ export function RoomScorekeep({
   if (displayQR) {
     return (
       <>
-        <Fab className="fab" color="primary" onClick={() => setDisplayQR(false)}>
+        <Fab
+          className="fab"
+          color="primary"
+          onClick={() => setDisplayQR(false)}
+        >
           <ChevronLeft />
         </Fab>
         <div className="qrcode-container flex-grow flex-column flex-justify-center">
-        <QRCode value={`${window.location.origin}/score/${roomId}`} bgColor="#141414" fgColor="#80DBCE"/>
+          <QRCode
+            value={`${window.location.origin}/score/${roomId}`}
+            bgColor="#141414"
+            fgColor="#80DBCE"
+          />
         </div>
       </>
     );
@@ -170,7 +178,7 @@ export function RoomScorekeep({
     return (
       <>
         <h2>Round {data.round.round_number}</h2>
-        
+
         <Fab className="fab" color="primary" onClick={() => setDisplayQR(true)}>
           <QrCode />
         </Fab>
@@ -185,7 +193,7 @@ export function RoomScorekeep({
         </div>
         <ParticipationList
           participations={data.participations}
-          onClick={(participation) => {}}
+          displayScore={true}
         />
       </>
     );

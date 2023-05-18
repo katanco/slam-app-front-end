@@ -19,6 +19,13 @@ export interface Round {
   room_id: string;
 }
 
+export interface Score {
+  id: string;
+  value: number;
+  submitter_id?: string;
+  participation_id: string;
+}
+
 export interface Participation {
   id: string;
   performance_notes?: string;

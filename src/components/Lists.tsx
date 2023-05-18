@@ -1,7 +1,13 @@
 import SmoothList from "react-smooth-list";
-import { Participant, Room, participationResponse } from "../types/types";
+import {
+  Participant,
+  Room,
+  Score,
+  participationResponse,
+} from "../types/types";
 import { IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
+import { useFetch } from "usehooks-ts";
 
 export function ParticipantList({
   participants,
@@ -80,23 +86,60 @@ export function RoomList({
 }
 
 export function ParticipationList({
-  participations, onClick
+  participations,
+  onClick,
+  displayScore,
 }: {
-  participations: participationResponse[], onClick: (participation: participationResponse) => void
+  participations: participationResponse[];
+  onClick?: (participation: participationResponse) => void;
+  displayScore?: boolean;
 }) {
   return (
     <SmoothList>
-      {participations
-        .map((item) => (
-          <div
-            className="card flex"
-            key={item.participation.id}
-            onClick={() => onClick(item)}
-          >
-            <div className="flex-grow" ><span style={{fontWeight: "bold"}}>{`${item.participant.name}`}</span></div>
-            <div>{item.participation.score}</div>
+      {participations.map((item) => (
+        <div
+          className="card flex"
+          key={item.participation.id}
+          onClick={() => onClick && onClick(item)}
+        >
+          <div className="flex-grow">
+            <span
+              style={{ fontWeight: "bold" }}
+            >{`${item.participant.name}`}</span>
           </div>
-        ))}
+          {displayScore && (
+            <>
+              <ParticipationScoreList participationId={item.participation.id} />
+              <div className="text-score">{item.participation.score}</div>
+            </>
+          )}
+        </div>
+      ))}
     </SmoothList>
+  );
+}
+
+function ParticipationScoreList({
+  participationId,
+}: {
+  participationId: string;
+}) {
+  let { data, error } = useFetch<Array<Score>>(
+    `${process.env.REACT_APP_API_URL}/score?participation_id=${participationId}`
+  );
+
+  if (error) {
+    return <></>;
+  }
+  if (!data) {
+    return <div>...</div>;
+  }
+  return (
+    <div>
+      {data
+        .sort((a, b) => a.value - b.value)
+        .map((score) => score.value)
+        .join(", ")}
+    </div>
   );
 }
