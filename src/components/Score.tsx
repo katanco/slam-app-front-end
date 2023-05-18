@@ -11,16 +11,17 @@ export function Score({
   participationId,
   setOpen,
   setParticipationId,
+  submitterId,
 }: {
   participationId: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setParticipationId: React.Dispatch<React.SetStateAction<string>>;
+  submitterId: string;
 }) {
   let [valueGroups, setValueGroups] = useState({
     first: "5",
     second: ".5",
   });
-  let [submitterId, setSubmitterId] = useState("");
   let [loading, setLoading] = useState(false);
 
   let handleSubmit = async (event: FormEvent) => {
@@ -59,21 +60,10 @@ export function Score({
     });
   };
 
-  if (!submitterId) {
-    const storedId = localStorage.getItem("submitterId");
-    if (storedId) setSubmitterId(storedId);
-    else {
-      const newId = Math.random().toString(36).slice(2, 7);
-      localStorage.setItem("submitterId", newId);
-    }
-  }
-
   return (
     <Fragment>
       <form onSubmit={handleSubmit} className="flex-column">
-        <div
-          className="flex-grow flex-column flex-justify-center"
-        >
+        <div className="flex-grow flex-column flex-justify-center">
           <Picker
             optionGroups={optionGroups}
             valueGroups={valueGroups}

@@ -15,6 +15,7 @@ import {
 } from "react-beautiful-dnd";
 import { Fab } from "@mui/material";
 import { ChevronLeft, QrCode } from "@mui/icons-material";
+import { Congratulations } from "./Congratulations";
 
 export function RoomScorekeep({
   setOpen,
@@ -169,10 +170,7 @@ export function RoomScorekeep({
     );
   } else if (data.participations.length === 1) {
     return (
-      <>
-        <h1>Congratulations!</h1>
-        <h2>{data.participations[0].participant.name}</h2>
-      </>
+      <Congratulations name={data.participations[0].participant.name}/>
     );
   } else if (!closed) {
     return (
@@ -193,7 +191,6 @@ export function RoomScorekeep({
         </div>
         <ParticipationList
           participations={data.participations}
-          displayScore={true}
         />
       </>
     );

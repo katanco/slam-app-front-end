@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import { RoundResponse } from "../types/types";
 import { Loader } from "./Helpers";
@@ -6,6 +6,7 @@ import { ParticipationList } from "./Lists";
 import useWebSocket from "react-use-websocket";
 import { Score } from "./Score";
 import { useIsFirstRender } from "usehooks-ts";
+import { Congratulations } from "./Congratulations";
 
 export function RoomJudge({
   setOpen,
@@ -15,10 +16,20 @@ export function RoomJudge({
   let { roomId } = useParams();
   let [participationId, setParticipationId] = useState("");
   let [data, setData] = useState<RoundResponse>();
+  let [submitterId, setSubmitterId] = useState("");
+
+  if (!submitterId) {
+    const storedId = localStorage.getItem("submitterId");
+    if (storedId) setSubmitterId(storedId);
+    else {
+      const newId = Math.random().toString(36).slice(2, 7);
+      localStorage.setItem("submitterId", newId);
+    }
+  }
 
   const fetchData = async () => {
     try {
-      setData(undefined)
+      setData(undefined);
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
       );
@@ -53,7 +64,7 @@ export function RoomJudge({
     }
   };
 
-  const { sendMessage } = useWebSocket(socketUrl, {
+  useWebSocket(socketUrl, {
     onMessage: onMessage,
     onOpen: onOpen,
   });
@@ -66,8 +77,14 @@ export function RoomJudge({
         participationId={participationId}
         setOpen={setOpen}
         setParticipationId={setParticipationId}
+        submitterId={submitterId}
       />
     );
+  }
+  if (data.participations.length === 1) {
+    return (
+      <Congratulations name={data.participations[0].participant.name}/>
+    )
   }
   return (
     <Fragment>
@@ -77,6 +94,7 @@ export function RoomJudge({
         onClick={(participation) =>
           setParticipationId(participation.participation.id)
         }
+        submitterId={submitterId}
       />
     </Fragment>
   );

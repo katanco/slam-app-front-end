@@ -88,11 +88,11 @@ export function RoomList({
 export function ParticipationList({
   participations,
   onClick,
-  displayScore,
+  submitterId,
 }: {
   participations: participationResponse[];
   onClick?: (participation: participationResponse) => void;
-  displayScore?: boolean;
+  submitterId?: string;
 }) {
   return (
     <SmoothList>
@@ -107,11 +107,11 @@ export function ParticipationList({
               style={{ fontWeight: "bold" }}
             >{`${item.participant.name}`}</span>
           </div>
-          {displayScore && (
-            <>
-              <ParticipationScoreList participationId={item.participation.id} />
-              <div className="text-score">{item.participation.score}</div>
-            </>
+          <ParticipationScoreList participationId={item.participation.id} submitterId={submitterId} />
+          {!submitterId && (
+            <div className="text-score">
+              {item.participation.score}
+            </div>
           )}
         </div>
       ))}
@@ -121,11 +121,13 @@ export function ParticipationList({
 
 function ParticipationScoreList({
   participationId,
+  submitterId,
 }: {
   participationId: string;
+  submitterId?: string;
 }) {
   let { data, error } = useFetch<Array<Score>>(
-    `${process.env.REACT_APP_API_URL}/score?participation_id=${participationId}`
+    `${process.env.REACT_APP_API_URL}/score?participation_id=${participationId}${submitterId ? `&submitter_id=${submitterId}` : ``}`
   );
 
   if (error) {
