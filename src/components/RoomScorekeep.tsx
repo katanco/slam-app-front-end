@@ -45,7 +45,11 @@ export function RoomScorekeep({
   const onMessage = (event: MessageEvent<any>) => {
     console.log(event);
 
-    if (event.data === "round advanced" || "score submitted" || "deduction submitted") {
+    if (
+      event.data === "round advanced" ||
+      "score submitted" ||
+      "deduction submitted"
+    ) {
       refresh();
     }
   };
@@ -62,7 +66,10 @@ export function RoomScorekeep({
   let handleClose = () => {
     if (data?.participations) {
       let sorted = data.participations.sort(
-        (a, b) => (b.participation.score || 0) - (a.participation.score || 0)
+        (a, b) =>
+          ((b.participation.score || 0) - (b.participation.deduction || 0) ||
+            0) - ((a.participation.score || 0) - (a.participation.deduction || 0) ||
+            0)
       );
       const middleIndex = Math.ceil(sorted.length / 2);
       setAdvancing(sorted.slice(0, middleIndex));
@@ -251,7 +258,9 @@ export function RoomScorekeep({
                     >
                       <div className="flex-grow">{item.participant.name}</div>
                       <div className="text-score">
-                        {item.participation.score}
+                        {item.participation.score &&
+                          item.participation.score -
+                            (item.participation.deduction || 0)}
                       </div>
                     </div>
                   )}
@@ -280,7 +289,9 @@ export function RoomScorekeep({
                     >
                       <div className="flex-grow">{item.participant.name}</div>
                       <div className="text-score">
-                        {item.participation.score}
+                        {item.participation.score &&
+                          item.participation.score -
+                            (item.participation.deduction || 0)}
                       </div>
                     </div>
                   )}
