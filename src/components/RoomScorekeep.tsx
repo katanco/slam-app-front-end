@@ -16,6 +16,7 @@ import {
 import { Fab } from "@mui/material";
 import { ChevronLeft, QrCode } from "@mui/icons-material";
 import { Congratulations } from "./Congratulations";
+import { Timer } from "./Timer";
 
 export function RoomScorekeep({
   setOpen,
@@ -28,6 +29,7 @@ export function RoomScorekeep({
   let [advancing, setAdvancing] = useState<participationResponse[]>([]);
   let [nonAdvancing, setNonAdvancing] = useState<participationResponse[]>([]);
   let [displayQR, setDisplayQR] = useState(false);
+  let [participationId, setParticipationId] = useState("");
 
   let { data, error, refresh } = useRefreshableFetch<RoundResponse>(
     `${process.env.REACT_APP_API_URL}/room/${roomId}/current`
@@ -43,7 +45,7 @@ export function RoomScorekeep({
   const onMessage = (event: MessageEvent<any>) => {
     console.log(event);
 
-    if (event.data === "round advanced" || "score submitted") {
+    if (event.data === "round advanced" || "score submitted" || "deduction submitted") {
       refresh();
     }
   };
@@ -168,11 +170,31 @@ export function RoomScorekeep({
         </div>
       </>
     );
-  } else if (data.participations.length === 1) {
+  }
+  if (participationId) {
     return (
-      <Congratulations name={data.participations[0].participant.name}/>
+      <>
+        <Fab
+          className="fab"
+          color="primary"
+          onClick={() => setParticipationId("")}
+        >
+          <ChevronLeft />
+        </Fab>
+        <div className="timer-container flex-grow flex-column flex-justify-center">
+          <Timer
+            participationId={participationId}
+            setOpen={setOpen}
+            setParticipationId={setParticipationId}
+          />
+        </div>
+      </>
     );
-  } else if (!closed) {
+  }
+  if (data.participations.length === 1) {
+    return <Congratulations name={data.participations[0].participant.name} />;
+  }
+  if (!closed) {
     return (
       <>
         <h2>Round {data.round.round_number}</h2>
@@ -191,6 +213,7 @@ export function RoomScorekeep({
         </div>
         <ParticipationList
           participations={data.participations}
+          onClick={(item) => setParticipationId(item.participation.id)}
         />
       </>
     );
@@ -224,10 +247,12 @@ export function RoomScorekeep({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="card"
+                      className="card flex"
                     >
                       <div className="flex-grow">{item.participant.name}</div>
-                      <div>{item.participation.score}</div>
+                      <div className="text-score">
+                        {item.participation.score}
+                      </div>
                     </div>
                   )}
                 </Draggable>
@@ -251,10 +276,12 @@ export function RoomScorekeep({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="card"
+                      className="card flex"
                     >
                       <div className="flex-grow">{item.participant.name}</div>
-                      <div>{item.participation.score}</div>
+                      <div className="text-score">
+                        {item.participation.score}
+                      </div>
                     </div>
                   )}
                 </Draggable>

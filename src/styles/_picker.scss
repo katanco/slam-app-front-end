@@ -10,8 +10,15 @@ html, body, #root, .App, form{
     &:has(.qrcode-container) {
       height: 100%;
   }
+    &:has(.timer-container) {
+      height: 100%;
+    }
 }
 
 .qrcode-container {
+  height: 100%;
+}
+
+.timer-container {
   height: 100%;
 }

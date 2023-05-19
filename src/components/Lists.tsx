@@ -107,11 +107,24 @@ export function ParticipationList({
               style={{ fontWeight: "bold" }}
             >{`${item.participant.name}`}</span>
           </div>
-          <ParticipationScoreList participationId={item.participation.id} submitterId={submitterId} />
+          <ParticipationScoreList
+            participationId={item.participation.id}
+            submitterId={submitterId}
+          />
           {!submitterId && (
-            <div className="text-score">
-              {item.participation.score}
-            </div>
+            <>
+              {item.participation.deduction && (
+                <div className="text-deduction">
+                  (-{item.participation.deduction})
+                </div>
+              )}
+              {item?.participation?.score && (
+                <div className="text-score">
+                  {item.participation.score -
+                    (item?.participation?.deduction || 0)}
+                </div>
+              )}
+            </>
           )}
         </div>
       ))}
@@ -127,7 +140,11 @@ function ParticipationScoreList({
   submitterId?: string;
 }) {
   let { data, error } = useFetch<Array<Score>>(
-    `${process.env.REACT_APP_API_URL}/score?participation_id=${participationId}${submitterId ? `&submitter_id=${submitterId}` : ``}`
+    `${
+      process.env.REACT_APP_API_URL
+    }/score?participation_id=${participationId}${
+      submitterId ? `&submitter_id=${submitterId}` : ``
+    }`
   );
 
   if (error) {

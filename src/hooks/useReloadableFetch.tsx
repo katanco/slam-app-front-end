@@ -7,8 +7,6 @@ interface State<T> {
   refresh: () => void;
 }
 
-type Cache<T> = { [url: string]: T };
-
 // discriminated union type
 type Action<T> =
   | { type: "loading" }
