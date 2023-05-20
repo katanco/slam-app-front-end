@@ -7,6 +7,7 @@ import useWebSocket from "react-use-websocket";
 import { Score } from "./Score";
 import { useIsFirstRender } from "usehooks-ts";
 import { Congratulations } from "./Congratulations";
+import SmoothList from "react-smooth-list";
 
 export function RoomJudge({
   setOpen,
@@ -59,8 +60,13 @@ export function RoomJudge({
   const onMessage = (event: MessageEvent<any>) => {
     console.log(event);
 
-    if (event.data === "round advanced") {
-      fetchData();
+    const message = JSON.parse(event.data);
+
+    if (
+      message.action === "round advanced") {
+      if (message.id === roomId) {
+        fetchData();
+      }
     }
   };
 
@@ -89,6 +95,7 @@ export function RoomJudge({
   return (
     <Fragment>
       <h2>Round {data.round.round_number}</h2>
+      <SmoothList>
       <ParticipationList
         participations={data.participations}
         onClick={(participation) =>
@@ -96,6 +103,7 @@ export function RoomJudge({
         }
         submitterId={submitterId}
       />
+      </SmoothList>
     </Fragment>
   );
 }

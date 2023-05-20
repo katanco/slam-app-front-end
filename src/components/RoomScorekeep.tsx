@@ -45,12 +45,20 @@ export function RoomScorekeep({
   const onMessage = (event: MessageEvent<any>) => {
     console.log(event);
 
+    const message = JSON.parse(event.data);
+
     if (
-      event.data === "round advanced" ||
-      "score submitted" ||
-      "deduction submitted"
+      message.action === "round advanced" ||
+      "deduction submitted" ||
+      "score submitted"
     ) {
-      refresh();
+      if (
+        data?.participations.find(
+          (item) => item.participation.id === message.id
+        )
+      ) {
+        refresh();
+      }
     }
   };
 
@@ -68,8 +76,8 @@ export function RoomScorekeep({
       let sorted = data.participations.sort(
         (a, b) =>
           ((b.participation.score || 0) - (b.participation.deduction || 0) ||
-            0) - ((a.participation.score || 0) - (a.participation.deduction || 0) ||
-            0)
+            0) -
+          ((a.participation.score || 0) - (a.participation.deduction || 0) || 0)
       );
       const middleIndex = Math.ceil(sorted.length / 2);
       setAdvancing(sorted.slice(0, middleIndex));
@@ -94,7 +102,8 @@ export function RoomScorekeep({
       );
       setLoading(false);
       if (res.status === 201) {
-        sendMessage("round advanced");
+        const message = { action: "round advanced", id: roomId };
+        sendMessage(JSON.stringify(message));
         window.location.reload();
       } else {
         setOpen(true);
@@ -193,6 +202,11 @@ export function RoomScorekeep({
             participationId={participationId}
             setOpen={setOpen}
             setParticipationId={setParticipationId}
+            participationNotes={
+              data.participations.find(
+                (item) => item.participation.id === participationId
+              )?.participation.performance_notes
+            }
           />
         </div>
       </>

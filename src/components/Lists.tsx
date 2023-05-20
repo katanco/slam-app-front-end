@@ -95,7 +95,7 @@ export function ParticipationList({
   submitterId?: string;
 }) {
   return (
-    <SmoothList>
+    <>
       {participations.map((item) => (
         <div
           className="card flex"
@@ -128,7 +128,7 @@ export function ParticipationList({
           )}
         </div>
       ))}
-    </SmoothList>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import { Button, Stack, TextField } from "@mui/material";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { useTimer } from "../hooks/useTimer";
 
 const formatTime = (timer: number) => {
   const getSeconds = `0${timer % 60}`.slice(-2);
@@ -12,10 +13,12 @@ export const Timer = ({
   participationId,
   setParticipationId,
   setOpen,
+  participationNotes
 }: {
   participationId: string;
   setParticipationId: React.Dispatch<React.SetStateAction<string>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  participationNotes?: string
 }) => {
   const {
     timer,
@@ -27,7 +30,7 @@ export const Timer = ({
     handleReset,
   } = useTimer(0);
 
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(participationNotes);
 
   let handleSubmit = async () => {
     try {
@@ -87,48 +90,4 @@ export const Timer = ({
       </Stack>
     </form>
   );
-};
-
-const useTimer = (initialState = 0) => {
-  const [timer, setTimer] = useState(initialState);
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const countRef = useRef<NodeJS.Timer | null>(null);
-
-  const handleStart = () => {
-    setIsActive(true);
-    setIsPaused(true);
-    countRef.current = setInterval(() => {
-      setTimer((timer) => timer + 1);
-    }, 1000);
-  };
-
-  const handlePause = () => {
-    if (countRef.current) clearInterval(countRef.current);
-    setIsPaused(false);
-  };
-
-  const handleResume = () => {
-    setIsPaused(true);
-    countRef.current = setInterval(() => {
-      setTimer((timer) => timer + 1);
-    }, 1000);
-  };
-
-  const handleReset = () => {
-    if (countRef.current) clearInterval(countRef.current);
-    setIsActive(false);
-    setIsPaused(false);
-    setTimer(0);
-  };
-
-  return {
-    timer,
-    isActive,
-    isPaused,
-    handleStart,
-    handlePause,
-    handleResume,
-    handleReset,
-  };
 };
