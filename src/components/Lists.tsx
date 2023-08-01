@@ -5,7 +5,7 @@ import {
   Score,
   participationResponse,
 } from "../types/types";
-import { IconButton } from "@mui/material";
+import { Card, CardActionArea, CardContent, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useFetch } from "usehooks-ts";
 
@@ -95,40 +95,44 @@ export function ParticipationList({
   submitterId?: string;
 }) {
   return (
-    <>
+    <SmoothList>
       {participations.map((item) => (
-        <div
+        <Card
           className="card flex"
           key={item.participation.id}
           onClick={() => onClick && onClick(item)}
         >
-          <div className="flex-grow">
-            <span
-              style={{ fontWeight: "bold" }}
-            >{`${item.participant.name}`}</span>
-          </div>
-          <ParticipationScoreList
-            participationId={item.participation.id}
-            submitterId={submitterId}
-          />
-          {!submitterId && (
-            <>
-              {item.participation.deduction && (
-                <div className="text-deduction">
-                  (-{item.participation.deduction})
-                </div>
+          <CardActionArea>
+            <CardContent>
+              <div className="flex-grow">
+                <span
+                  style={{ fontWeight: "bold" }}
+                >{`${item.participant.name}`}</span>
+              </div>
+              <ParticipationScoreList
+                participationId={item.participation.id}
+                submitterId={submitterId}
+              />
+              {!submitterId && (
+                <>
+                  {item.participation.deduction && (
+                    <div className="text-deduction">
+                      (-{item.participation.deduction})
+                    </div>
+                  )}
+                  {item?.participation?.score && (
+                    <div className="text-score">
+                      {item.participation.score -
+                        (item?.participation?.deduction || 0)}
+                    </div>
+                  )}
+                </>
               )}
-              {item?.participation?.score && (
-                <div className="text-score">
-                  {item.participation.score -
-                    (item?.participation?.deduction || 0)}
-                </div>
-              )}
-            </>
-          )}
-        </div>
+            </CardContent>
+          </CardActionArea>
+        </Card>
       ))}
-    </>
+    </SmoothList>
   );
 }
 
@@ -151,7 +155,7 @@ function ParticipationScoreList({
     return <></>;
   }
   if (!data) {
-    return <div>...</div>;
+    return <></>;
   }
   return (
     <div>

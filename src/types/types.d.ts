@@ -1,9 +1,18 @@
+enum RoomStatus {
+  Pending,
+  Sacrificing,
+  Ongoing,
+  Concluded,
+}
+
 export interface Room {
   id: string;
   name: string;
   created: string;
   round_id_current?: string;
   participation_id_current?: string;
+  room_status?: RoomStatus;
+  round_id_sacrificial?: string;
 }
 
 export interface Participant {
@@ -11,6 +20,7 @@ export interface Participant {
   name: string;
   pronouns?: string;
   room_id: string;
+  is_sacrifice: boolean;
 }
 
 export interface Round {
@@ -35,6 +45,12 @@ export interface Participation {
   performance_order: number;
   round_id: string;
   participant_id: string;
+}
+
+export interface Feedback {
+  id: string;
+  message: string;
+  created: { secs_since_epoch: number; nanos_since_epoch: number };
 }
 
 export interface RoomResponse {

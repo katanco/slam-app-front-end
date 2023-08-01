@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { RoundResponse } from "../types/types";
 import { Loader } from "./Helpers";
@@ -7,7 +7,6 @@ import useWebSocket from "react-use-websocket";
 import { Score } from "./Score";
 import { useIsFirstRender } from "usehooks-ts";
 import { Congratulations } from "./Congratulations";
-import SmoothList from "react-smooth-list";
 
 export function RoomJudge({
   setOpen,
@@ -62,8 +61,7 @@ export function RoomJudge({
 
     const message = JSON.parse(event.data);
 
-    if (
-      message.action === "round advanced") {
+    if (message.action === "round advanced") {
       if (message.id === roomId) {
         fetchData();
       }
@@ -88,14 +86,12 @@ export function RoomJudge({
     );
   }
   if (data.participations.length === 1) {
-    return (
-      <Congratulations name={data.participations[0].participant.name}/>
-    )
+    return <Congratulations name={data.participations[0].participant.name} />;
   }
   return (
-    <Fragment>
+    <>
       <h2>Round {data.round.round_number}</h2>
-      <SmoothList>
+
       <ParticipationList
         participations={data.participations}
         onClick={(participation) =>
@@ -103,7 +99,6 @@ export function RoomJudge({
         }
         submitterId={submitterId}
       />
-      </SmoothList>
-    </Fragment>
+    </>
   );
 }
